@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Cat</title>
+</head>
+<body>
+  <header>
+    <h1>Random Cat Example</h1>
+    <button id="fetch-button">Get Random Cat</button>
+  </header>
+
+  <main id="main-content"></main>
+
+  <script>
+    const triggerButton = document.getElementById('fetch-button')
+    const mainContent = document.getElementById('main-content')
+
+    triggerButton.addEventListener('click', () => {
+      fetch('https://api.thecatapi.com/v1/images/search')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)  //观察数据结构
+
+          //The Cat API 返回的JSON是数组形式
+          let catData = data[0]
+          let catImage = catData.url
+
+          let catHTML = `
+            <img src="${catImage}" alt="A random cat" width="400"/>
+          `
+          mainContent.innerHTML = catHTML
+        })
+        .catch(error => {
+          console.error('Error fetching cat image:', error)
+        })
+    })
+  </script>
+</body>
+</html>
