@@ -3,37 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Random Cat</title>
+  <title>Your Random Cat Tarot</title>
 </head>
 <body>
   <header>
-    <h1>Random Cat Example</h1>
-    <button id="fetch-button">Get Random Cat</button>
+    <h1>Your Random Cat Tarot</h1>
+    <button id="fetch-button">Meet a Random Cat</button>
+    <button id="tarot-button" disabled>Reveal Your Cat's Tarot</button>
   </header>
 
   <main id="main-content"></main>
 
   <script>
     const triggerButton = document.getElementById('fetch-button')
-    const mainContent = document.getElementById('main-content')
+    const tarotButton   = document.getElementById('tarot-button')
+    const mainContent   = document.getElementById('main-content')
 
+    let currentCatUrl = null
+
+    //随机猫图
     triggerButton.addEventListener('click', () => {
       fetch('https://api.thecatapi.com/v1/images/search')
         .then(response => response.json())
         .then(data => {
-          console.log(data)  //观察数据结构
+          //The Cat API返回的JSON是数组形式
+          const catData = data[0]
+          const catImage = catData.url
+          currentCatUrl = catImage
 
-          //The Cat API 返回的JSON是数组形式
-          let catData = data[0]
-          let catImage = catData.url
-
-          let catHTML = `
-            <img src="${catImage}" alt="A random cat" width="400"/>
+          const catHTML = `
+            <img id="cat-alone" src="${catImage}" alt="A random cat" width="400"/>
           `
           mainContent.innerHTML = catHTML
+
+          //有猫图后才允许抽牌
+          const imgEl = document.getElementById('cat-alone')
+          tarotButton.disabled = true
+          imgEl.onload = () => { tarotButton.disabled = false }
+          imgEl.onerror = () => { tarotButton.disabled = true }
         })
         .catch(error => {
           console.error('Error fetching cat image:', error)
+        })
+    })
+
+    //抽塔罗牌，生成卡面
+    tarotButton.addEventListener('click', () => {
+      if (!currentCatUrl) return
+
+      fetch('https://tarotapi.dev/api/v1/cards/random?n=1')
+        .then(r => r.json())
+        .then(({ cards }) => {
+          const c = cards && cards[0]
+          if (!c) return
+
+          //随机决定正位/逆位（50%）
+          const isReversed = Math.random() < 0.5
+          const meaning = isReversed ? (c.meaning_rev || c.meaning_up) : (c.meaning_up || c.meaning_rev)
+          const rotateStyle = isReversed ? 'transform: rotate(180deg);' : ''
+
+          //生成塔罗牌面
+          const cardHTML = `
+            <div
+              style="
+                width:340px;height:600px;
+                background: rgb(94,80,148);
+                border-radius:20px;
+                position:relative;
+                margin-top:16px;
+                display:flex;align-items:center;justify-content:center;
+              "
+            >
+              <!--图片容器，用于居中叠加标题-->
+              <div style="position:relative;width:300px;max-width:300px;">
+                <img
+                  src="${currentCatUrl}"
+                  alt="Cat on tarot"
+                  style="width:300px;display:block;${rotateStyle}"
+                />
+                <!--白色牌名-->
+                <div
+                  style="
+                    position:absolute;left:50%;top:50%;
+                    transform: translate(-50%,-50%);
+                    color:#fff;text-align:center;
+                    font-size:48px;
+                  "
+                ">${c.name}</div>
+              </div>
+            </div>
+            <div style="max-width:340px;margin-top:8px;">
+              ${meaning}
+            </div>
+          `
+
+          //把卡面追加到当前内容后面
+          mainContent.insertAdjacentHTML('beforeend', cardHTML)
+        })
+        .catch(err => {
+          console.error(err)
         })
     })
   </script>
