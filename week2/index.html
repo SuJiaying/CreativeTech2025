@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch example</title>
+</head>
+<body>
+    <header>
+        <hi>Fetch example</hi>
+        <h3>Start here:</h3>
+        <button id="fetch-button">Fetch data</button>
+        <button id="fetchAnimal">Fetch animal</button>
+        <input type="text" id="animalText" placeholder="Enter animal name"/>
+    </header>
+
+    <main id="main-content">
+
+    </main>
+    <script>
+        const triggerButton = document.getElementById('fetch-button')
+        const animalButton = document.getElementById('fetchAnimal')
+        const mainContent = document.getElementById('main-content')
+
+        const fetchAnimalData = ()=>{
+            //type the APIkey here
+            const APIkey= 'typeYourAPIHere'
+            let animalName = document.getElementById('animalText').value
+            fetch('https://api.api-ninjas.com/v1/animals?name=' + animalName,{
+                method: 'GET',
+                headers: {
+                    'X-Api-Key': APIkey
+                }
+            })
+            .then(response => response.json())
+            .then(data =>{
+                console.log(data)
+                let animal = data[0]
+                let animalHTML =`
+                <h2>${animal.name}<h2/>
+                <p>${animal.characteristics.slogan? animal.characteristics.slogan: 'No slogan available'}<p/>
+                <p>${animal.characteristics.habitat? animal.characteristics.habitat: 'No habitat available'}<p/>
+                `
+                mainContent.innerHTML += animalHTML
+            })
+        }
+
+        const fetchCocktailData = ()=>{
+            fetch('https://www.thecocktaildb.com/api/json/v1/1/random.php')
+                .then(response => response.json())
+                .then((data) => appendDrinkData(data))
+        }
+
+
+        const fetchNasaData = (requestDate)=>{
+            //在GitHub发布的时候要去掉自己的API！替换成别的东西，不然可能会被其他人抓取使用
+            fetch('https://api.nasa.gov/planetary/apod?api_key=typeYourAPIHere&date=' + requestDate)
+            .then(response => response.json())
+                .then((data) => appendNasaData(data, false))
+        }
+
+        const appendDrinkData= (data, logData = true)=> {
+            if(logData) console.log(data)
+            let drinkData = data.drinks[0]
+            if(logData) console.log(drinkData)
+            let drinkName = drinkData.strDrink
+            let drinkImage = drinkData.strDrinkThumb
+            let drinkInstructions = drinkData.strInstructions
+
+            let drinkHTML = `
+                <h2>${drinkName}</h2>
+                <img src ="${drinkImage}" alt="${drinkName}" width ="300"/>
+                <p>${drinkInstructions}</p>
+            `
+            mainContent.innerHTML = drinkHTML
+            const drinkDate =new Date(drinkData.dateModified)
+            const year = drinkDate.getFullYear()
+            const month = drinkDate.getMonth() +1
+            const day = drinkDate.getDay()
+            const nasaDate = year + '-' + (month< 10? '0'+ month : month) + '-' + (day< 10? '0'+ day : day) 
+            console.log(nasaDate)
+
+            fetchNasaData(nasaDate)
+            
+        }
+
+        const appendNasaData = (data)=>{
+            console.log(data)
+            let nasaTitle = data.title
+            let nasaAuthor = data.copyright ? data.copyright :'Public Domain'
+            let nasaImage = data.hdurl
+
+            let nasaHTML =`
+             <h2>${nasaTitle}</h2>
+             <h4>${nasaAuthor}</h4>
+                <img src ="${nasaImage}" alt="${nasaTitle}"/>`
+
+                mainContent.innerHTML += nasaHTML
+        }
+
+
+        triggerButton.addEventListener('click', fetchCocktailData)
+        animalButton.addEventListener('click', fetchAnimalData)
+                //console.log(data)
+                //下面这一坨被搬进上面几行的function里了
+                // let drinkData= data.drinks[0]
+                // console.log(drinkData)
+                // let drinkName = drinkData.strDrink
+                // let drinkImage = drinkData.strDrinkThumb
+                // let drinkInstructions = drinkData.strInstrucions
+
+                // let drinkHTML = `
+                //     <h2>${drinkName}</h2>
+                //     <img src ="${drinkImage}" alt="${drinkName}" width ="300"/>
+                //     <p>${drinkInstructions}</p>
+                //     `
+                //     mainContent.innerHTML = drinkHTML
+                
+            
+        
+    </script>
+</body>
+</html>
