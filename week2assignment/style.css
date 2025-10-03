@@ -1,0 +1,46 @@
+html,
+body{
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(178, 240, 220);
+}
+
+body, main{
+
+    justify-content: center;
+    
+}
+
+main {
+    display:flex;
+    flex-wrap: wrap; 
+    justify-content: center;
+    align-content: center;
+    width: 100%;
+    
+    
+}
+
+.step {
+    height: auto;   
+    text-align: center;
+    box-sizing: border-box; 
+    justify-content: center;
+    padding: 20px;
+    
+}
+
+.step img {
+    width: 1200px;
+    height: auto;
+}
+
+.step p {
+    width:1200px;
+    margin: 5px;
+    font-size: 16px;
+    color: #333;
+    
+    flex-wrap: wrap;
+    text-align:left;
+}
