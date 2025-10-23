@@ -1,0 +1,58 @@
+html,
+body{
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(178, 240, 220);
+}
+
+body, main{
+    margin:0px;
+    display:flex;
+    justify-content: center;
+    
+}
+
+main {
+    display:flex;
+    flex-wrap: wrap; 
+    justify-content: center;
+    align-content: center;
+    width: 100%;
+    padding: 40px;
+    
+    
+}
+
+.step {
+    width: 25%;
+    height: auto;
+    
+    
+    text-align: center;
+    box-sizing: border-box; 
+    justify-content: center;
+    
+}
+
+.step img {
+    width: 250px;
+    height: auto;
+}
+
+.step p {
+    width:300px;
+    margin: 5px;
+    font-size: 16px;
+    color: #333;
+    
+    flex-wrap: wrap;
+    text-align:left;
+}
+
+#sketchHolder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    
+}
