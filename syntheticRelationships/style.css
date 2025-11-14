@@ -75,7 +75,7 @@ main {
 
 .step p {
     width:900px;
-    margin: 5px;
+    margin: 5px 40px 5px 40px;
     font-size: 20px;
     color: #4a2d21;
     
@@ -93,8 +93,18 @@ main {
 }
 
 .step2 p {
+    /* width:900px; */
+    margin: 5px 80px 5px 80px;
+    font-size: 20px;
+    color: #4a2d21;
+    
+    flex-wrap: wrap;
+    /* text-align:left; */
+}
+
+.step5 p {
     width:900px;
-    margin: 5px;
+    margin: 5px 80px 5px 80px;
     font-size: 20px;
     color: #4a2d21;
     
@@ -104,7 +114,15 @@ main {
 
 
 .step2 video {
-    width: 500px;
+    width: 400px;
+    height: auto;
+    display: block;
+    margin: 10px auto;
+    justify-content:space-evenly;
+}
+
+.step5 video {
+    width: 900px;
     height: auto;
     display: block;
     margin: 10px auto;
