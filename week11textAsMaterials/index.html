@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text as material</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="sketch.js"></script>
+</head>
+<body>
+
+    
+    <main>
+        <div class="step3">
+            <img src="images/start.jpg" alt="Step 1">
+        </div>
+        <div class="step">
+            <p>I used the spells recorded in the Harry Potter novels and films from the API at https://api.potterdb.com . By using the “effect” field from the API as source text, my program generates new sentences. It works as if the random words I type become a spell, and the system writes a description for that spell based on the dataset.</p>
+            <img src="images/overview.png" alt="Step 1">
+        </div>
+        <div class="step">
+            <p>The code for the main.js page:</p>
+        </div>
+        <code>
+            <pre>
+                import './style.css'
+
+let fetchButton = document.getElementById('fetchTXT');
+let generateButton = document.getElementById('generateTXT');
+let ngramsOverWords = document.getElementById("ngramSelection").checked
+
+let inputText = document.getElementById('inputText');
+let outputText = document.getElementById('outputText');
+
+let sourceURL ='https://api.potterdb.com/v1/spells?page[size]=330';
+let sourceText = 'text.txt';
+
+let order =3; //n-gram order
+let ngrams ={}
+let beginnings = []
+
+//functions
+function fetchSourceText(){
+  fetch(sourceURL)
+    .then(response => response.json())
+    .then(data => {
+      const spells = data.data;
+
+      spells.forEach(spell => {
+        let effect = spell.attributes.effect;
+        if (!effect) return;
+
+        effect = effect.replace(/["'`#()<>,--!?;.:]/g, '');
+        if (!effect.trim()) return;
+
+        if (ngramsOverWords) {
+
+          for (let i = 0; i <= effect.length - order; i++) {
+            let gram = effect.substring(i, i + order);
+            if (!ngrams[gram]) {
+              ngrams[gram] = [];
+            }
+            ngrams[gram].push(effect.charAt(i + order));
+          }
+        } else {
+
+          let words = effect.split(/\s+/);
+          for (let i = 0; i < words.length - 1; i++) {
+            if (i === 0) beginnings.push(words[i]);
+
+            let next = words[i + 1];
+            if (!ngrams[words[i]]) ngrams[words[i]] = [];
+
+            ngrams[words[i]].push(next);
+          }
+        }
+      });
+
+      inputText.disabled = false;
+      generateButton.disabled = false;
+      console.log(ngrams);
+    })
+    .catch(error => {
+      console.error('Error fetching the text:', error);
+    });
+}
+
+function generateText(){
+  if(ngramsOverWords){
+    generateNGramText();
+  }else{
+    generateWordText();
+  }
+}
+
+function generateNGramText(){
+  let userSpellName = inputText.value.trim();
+
+  let currentGram = userSpellName.substring(0, order);
+  let result = currentGram;
+
+  if (currentGram.length < order || !ngrams[currentGram]) {
+    const keys = Object.keys(ngrams);
+    currentGram = keys[Math.floor(Math.random() * keys.length)];
+    result = currentGram;
+  }
+
+  for (let i = 0; i < 100; i++) {
+    let possibilities = ngrams[currentGram];
+    if (!possibilities) break;
+    let next = possibilities[Math.floor(Math.random() * possibilities.length)];
+    result += next;
+    currentGram = result.substring(result.length - order, result.length);
+  }
+
+  outputText.innerHTML = `
+    <strong>Spell:</strong> ${userSpellName || '(unnamed spell)'}<br/>
+    <strong>Effect description:</strong> ${result}
+  `;
+}
+
+function generateWordText(){
+let userSpellName = inputText.value.trim();
+
+  let currentWord = beginnings[Math.floor(Math.random() * beginnings.length)];
+  let resultWords = [currentWord];
+
+  for (let i = 0; i < 12; i++) {
+    let possibilities = ngrams[currentWord];
+    if (!possibilities) break;
+    let next = possibilities[Math.floor(Math.random() * possibilities.length)];
+    resultWords.push(next);
+    currentWord = next;
+  }
+
+  let description = resultWords.join(' ');
+
+  outputText.innerHTML = `
+  <div class="spell-line"><strong>Spell:</strong> ${userSpellName}</div>
+  <div class="description-line"><strong>Effect description:</strong> ${description}</div>
+`;
+
+}
+
+function toggleNGramMode(){
+  ngramsOverWords = document.getElementById("ngramSelection").checked;
+  
+  //reset
+  ngrams={}
+  beginnings=[]
+  inputText.value= ''
+  outputText.textContent = ''
+  inputText.disabled = true;
+  generateButton.disabled = true;
+}
+
+//event listeners
+fetchButton.addEventListener('click', fetchSourceText);
+generateButton.addEventListener('click', generateText);
+document.getElementById("ngramSelection").addEventListener('change', toggleNGramMode)
+document.getElementById("wordsSelection").addEventListener('change', toggleNGramMode)
+            </pre>
+        </code>
+
+        <div class="step">
+            <p>The code for the index.html page:</p>
+        </div>
+        <code>
+            <pre>
+                &lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;link rel="icon" type="image/svg+xml" href="/vite.svg" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;textgenerator&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;header&gt;
+&lt;h1&gt;Every Words Magic&lt;/h1&gt;
+    &lt;p style="margin: 0.25rem 0 1rem;"&gt;
+        &lt;a href="about.html" target="_blank" rel="noopener"&gt;About&lt;/a&gt;
+    &lt;/p&gt;
+
+      &lt;div&gt;Magic step 1:
+    &lt;button id="fetchTXT"&gt;Fetch source magic&lt;/button&gt;
+    &lt;input type="radio" id="ngramSelection" name="unitType"&gt;
+    &lt;label for="ngramSelection"&gt;N-grams&lt;/label&gt;
+     &lt;input type="radio" id="wordsSelection" name="unitType" checked&gt;
+     &lt;label for="wordsSelection"&gt;Words&lt;/label&gt;
+     &lt;/div&gt;
+     &lt;div&gt;Magic step 2:
+    &lt;input type="text" id="inputText" disabled/&gt;
+    &lt;button id="generateTXT" disabled&gt;Get your spell and its description&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;/header&gt;
+            </pre></code>
+
+        <div class="step2">
+            <video controls>
+                <source src="videos/v1.mp4" type="video/mp4">
+            </video>  
+        </div>
+        <div class="step2">
+            <video controls>
+                <source src="videos/v2.mp4" type="video/mp4">
+            </video>  
+        </div>
+
+
+</body>
+</html>
