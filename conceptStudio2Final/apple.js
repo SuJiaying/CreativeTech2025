@@ -22,7 +22,8 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(600, 600);
+let canvas =createCanvas(600, 600)
+  canvas.parent('apple');
 
   // ✅ 统一高度（宽度由每张图片自己的比例决定）
   let targetH = 70;
