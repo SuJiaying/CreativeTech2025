@@ -10,7 +10,7 @@ body {
 /* 让 main 在页面中间 */
 body {
   /* display: flex; */
-  justify-content: center; /* 水平居中 main */
+  /* justify-content: center; */
   flex-direction: column;
 }
 
