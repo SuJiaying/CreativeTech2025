@@ -11,6 +11,7 @@ body {
 body {
   display: flex;
   justify-content: center; /* 水平居中 main */
+  flex-direction: column;
 }
 
 /* ===== Layout ===== */
@@ -34,9 +35,9 @@ main {
 }
 
 /* 最后一个不需要底部间距（可选） */
-#sketchHolder {
+/* #sketchHolder {
   margin-bottom: 0;
-}
+} */
 
 /* ===== Your existing "step" blocks (kept, in case you still use them) ===== */
 .step {
