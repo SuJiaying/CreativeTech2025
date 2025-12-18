@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Alternative Machine</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-    
-       <!-- <div id="banana" class="sketch"></div>
-    <div id="apple" class="sketch"></div>
-    <div id="main" class="sketch"></div> -->
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.0/lib/p5.min.js"></script>
-    <!-- <script src="banana.js"></script>
-    <script src="apple.js"></script> -->
-    <script src="sketch.js"></script>
+  <body>
     <main>
-                <div id = "sketchHolder"></div>
+      <!-- p5 canvas 会挂在这里 -->
+      <div id="sketchHolder"></div>
     </main>
 
-</body>
+    <!-- 一定先加载 p5 -->
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.0/lib/p5.min.js"></script>
+
+    <!-- 再加载你的 sketch -->
+    <script src="sketch.js"></script>
+  </body>
 </html>

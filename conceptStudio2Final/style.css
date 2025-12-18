@@ -49,21 +49,6 @@ main {
     text-align:left;
 }
 
-#apple {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;   
-    
-}
-
-#banana {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;   
-    
-}
 
 #sketchHolder {
     display: flex;
