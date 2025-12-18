@@ -1,74 +1,63 @@
+/* ===== Base ===== */
 html,
-body{
-    height: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: rgb(178, 240, 220);
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgb(178, 240, 220);
 }
 
-body, main{
-    margin:0px;
-    display:flex;
-    justify-content: center;
-    
+/* 让 main 在页面中间 */
+body {
+  display: flex;
+  justify-content: center; /* 水平居中 main */
 }
 
+/* ===== Layout ===== */
 main {
-    display:flex;
-    flex-wrap: wrap; 
-    justify-content: center;
-    align-content: center;
-    width: 100%;
-    padding: 40px;
-    flex-direction:column;
-    
+  display: flex;
+  flex-direction: column;  /* ✅ 三个画布竖向排列 */
+  align-items: center;     /* ✅ 每一行内容水平居中 */
+  width: 100%;
+  padding: 40px;
+  box-sizing: border-box;
 }
 
+/* 三个 p5 容器统一样式 */
+#banana,
+#apple,
+#sketchHolder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px; /* ✅ 控制画布之间的垂直间距 */
+}
+
+/* 最后一个不需要底部间距（可选） */
+#sketchHolder {
+  margin-bottom: 0;
+}
+
+/* ===== Your existing "step" blocks (kept, in case you still use them) ===== */
 .step {
-    width: 25%;
-    height: auto;
-    margin: 20px;
-    
-    text-align: center;
-    box-sizing: border-box; 
-    justify-content: center;
-    
+  width: 25%;
+  height: auto;
+  margin: 20px;
+  text-align: center;
+  box-sizing: border-box;
+  justify-content: center;
 }
 
 .step img {
-    width: 250px;
-    height: auto;
+  width: 250px;
+  height: auto;
 }
 
 .step p {
-    width:300px;
-    margin: 5px;
-    font-size: 16px;
-    color: #333;
-    
-    flex-wrap: wrap;
-    text-align:left;
-}
-
-
-#sketchHolder {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;   
-    
-}
-#banana {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;   
-    
-}
-
-#apple {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;   
-    
+  width: 300px;
+  margin: 5px;
+  font-size: 16px;
+  color: #333;
+  flex-wrap: wrap;
+  text-align: left;
 }
