@@ -16,7 +16,7 @@ body {
 
 /* ===== Layout ===== */
 main {
-  display: flex;
+  /* display: flex; */
   flex-direction: column;  /* ✅ 三个画布竖向排列 */
   align-items: center;     /* ✅ 每一行内容水平居中 */
   width: 100%;
