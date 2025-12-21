@@ -487,11 +487,58 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
               <div class="thumb">
                 <img src="images/step2.jpg" alt="step2" />
               </div>
-              <h3 class="card-title">10</h3>
-              <p class="card-desc">10</p>
+              <h3 class="card-title">Wood texture step 2</h3>
+              <p class="card-desc">The second stage of creating this wood-like texture.</p>
             </div>
             <div class="card-face card-back">
-              <code><pre>// step2 process code here...</pre></code>
+              <code><pre>float hash21(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 34.345);
+    return fract(p.x * p.y);
+}
+
+//make it flat and mixed
+float noise2(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    float a = hash21(i);
+    float b = hash21(i + vec2(1, 0));
+    float c = hash21(i + vec2(0, 1));
+    float d = hash21(i + vec2(1, 1));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+float fbm(vec2 p) {
+    float v = 0.0; float a = 0.5;
+    mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+    for(int i=0; i<5; i++) {
+        v += a * noise2(p);
+        p = m * p; a *= 0.5;
+    }
+    return v;
+}
+
+//void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    //vec2 p = (fragCoord - 0.5 * iResolution.xy) / iResolution.y;
+    //float col = fbm(p * 5.0);
+    //fragColor = vec4(vec3(col), 1.0);
+//}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    vec2 p = (fragCoord - 0.5 * iResolution.xy) / iResolution.y;
+    p *= vec2(10.0, 2.0); //stretch
+
+    //Domain Warp
+    vec2 warp = vec2(fbm(p + 7.3), fbm(p + 45.1)) - 0.5;
+    p += warp * 3.0; 
+
+    //rings
+    float rings = sin(p.x * 2.6 + 6.0 * fbm(p * 0.35));
+    rings = 0.5 + 0.5 * rings;
+
+    fragColor = vec4(vec3(rings), 1.0);
+}</pre></code>
             </div>
           </div>
         </label>
@@ -504,11 +551,65 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
               <div class="thumb">
                 <img src="images/step3.jpg" alt="step3" />
               </div>
-              <h3 class="card-title">11</h3>
-              <p class="card-desc">11</p>
+              <h3 class="card-title">Wood texture step 3</h3>
+              <p class="card-desc">The third stage of creating this wood-like texture.</p>
             </div>
             <div class="card-face card-back">
-              <code><pre>// step3 process code here...</pre></code>
+              <code><pre>float hash21(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 34.345);
+    return fract(p.x * p.y);
+}
+
+//make it flat and mixed
+float noise2(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    float a = hash21(i);
+    float b = hash21(i + vec2(1, 0));
+    float c = hash21(i + vec2(0, 1));
+    float d = hash21(i + vec2(1, 1));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+float fbm(vec2 p) {
+    float v = 0.0; float a = 0.5;
+    mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+    for(int i=0; i<5; i++) {
+        v += a * noise2(p);
+        p = m * p; a *= 0.5;
+    }
+    return v;
+}
+
+vec3 woodColor(float h){
+    vec3 c1 = vec3(0.82, 0.67, 0.48); //light
+    vec3 c2 = vec3(0.64, 0.43, 0.26); //mid
+    vec3 c3 = vec3(0.35, 0.20, 0.10); //dark
+    float t1 = smoothstep(0.15, 0.55, h);
+    vec3 c = mix(c1, c2, t1);
+    float t2 = smoothstep(0.55, 0.95, h);
+    return mix(c, c3, t2);
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    vec2 uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y;
+    vec2 p = uv * vec2(10.0, 2.0); //stretch
+    vec2 warpVal = vec2(fbm(p + 7.3), fbm(p + 45.1)) - 0.5;
+    p += warpVal * 2.8;
+    //rings
+    float rings = 0.5 + 0.5 * sin(p.x * 2.6 + 6.0 * fbm(p * 0.35));
+    float grain = smoothstep(0.35, 0.85, fbm(p * 6.0));
+    float h = mix(rings, grain, 0.25);
+    h += 0.15 * fbm(p * 1.6);
+
+vec3 col = woodColor(h);
+    
+col *= 1.0 - dot(uv, uv) * 0.5;
+    
+    fragColor = vec4(col, 1.0);
+}</pre></code>
             </div>
           </div>
         </label>
@@ -524,11 +625,124 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
               <div class="thumb">
                 <img src="images/shader01.jpg" alt="shader01" />
               </div>
-              <h3 class="card-title">12</h3>
-              <p class="card-desc">12</p>
+              <h3 class="card-title">Wood texture step 4 (finished)</h3>
+              <p class="card-desc">The forth stage of creating this wood-like texture.</p>
             </div>
             <div class="card-face card-back">
-              <code><pre>// shader01 process code here...</pre></code>
+              <code><pre>float hash21(vec2 p){
+    p = fract(p*vec2(123.34, 456.21));
+    p += dot(p, p+34.345);
+    return fract(p.x*p.y);
+}
+
+float noise2(vec2 p){
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    float a = hash21(i);
+    float b = hash21(i+vec2(1,0));
+    float c = hash21(i+vec2(0,1));
+    float d = hash21(i+vec2(1,1));
+    vec2 u = f*f*(3.0-2.0*f);
+    return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+}
+
+float fbm(vec2 p){
+    float v = 0.0;
+    float a = 0.5;
+    mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+    for(int i=0;i<5;i++){
+        v += a * noise2(p);
+        p = m * p;
+        a *= 0.5;
+    }
+    return v;
+}
+
+//wood height field: rings + grain + warp
+float woodHeight(vec2 p){
+    //Mapping
+    p *= vec2(10.0, 2.0);
+
+    //domain warp (feeding Noise into another Noise's vector)
+    float w = fbm(p*0.8);
+    vec2 warp = vec2(fbm(p + 7.3), fbm(p + 45.1)) - 0.5;
+    p += warp * (2.8 + 0.6*w);
+
+    //rings
+    float ringScale = 2.6;              // bigger = more rings
+    float r = p.x;                      // along x = ring direction for plank
+    float rings = sin(r*ringScale + 6.0*fbm(p*0.35));
+    rings = 0.5 + 0.5*rings;
+
+    //grain (fine fibers)
+    float grain = fbm(p*6.0);
+    grain = smoothstep(0.35, 0.85, grain);
+
+    //combine
+    float h = rings;
+    h = mix(h, grain, 0.25);
+    h += 0.15*fbm(p*1.6);
+    return h;
+}
+
+// color ramp like Blender ColorRamp
+vec3 woodColor(float h){
+    vec3 c1 = vec3(0.82, 0.67, 0.48);   //light
+    vec3 c2 = vec3(0.64, 0.43, 0.26);   //mid
+    vec3 c3 = vec3(0.35, 0.20, 0.10);   //dark rings
+    float t1 = smoothstep(0.15, 0.55, h);
+    vec3 c = mix(c1, c2, t1);
+    float t2 = smoothstep(0.55, 0.95, h);
+    c = mix(c, c3, t2);
+    return c;
+}
+
+vec3 bumpNormal(vec2 uv, float strength){
+    //finite difference normal from height field
+    float e = 0.0015;
+    float h  = woodHeight(uv);
+    float hx = woodHeight(uv + vec2(e,0.0));
+    float hy = woodHeight(uv + vec2(0.0,e));
+    vec3 n = normalize(vec3((h - hx)*strength, (h - hy)*strength, 1.0));
+    return n;
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord.xy / iResolution.xy;
+    //center + aspect
+    vec2 p = (uv - 0.5);
+    p.x *= iResolution.x / iResolution.y;
+
+    //animate slightly to see it "alive"
+    //p += 0.02*sin(iTime*0.2);
+
+    float h = woodHeight(p);
+    vec3 albedo = woodColor(h);
+
+    //roughness variation (like ColorRamp into Roughness)
+    float rough = mix(0.25, 0.75, smoothstep(0.2, 0.9, fbm(p*2.0)));
+
+    // normal from height (like Bump node)
+    vec3 n = bumpNormal(p, 2.2);
+
+    //lighting
+    vec3 l = normalize(vec3(0.4, 0.6, 0.8));
+    vec3 v = normalize(vec3(0.0, 0.0, 1.0));
+    vec3 hvec = normalize(l + v);
+
+    float ndl = clamp(dot(n,l), 0.0, 1.0);
+    float specPow = mix(8.0, 80.0, 1.0-rough);
+    float spec = pow(clamp(dot(n,hvec),0.0,1.0), specPow);
+
+    vec3 col = albedo * (0.25 + 0.75*ndl) + spec*0.15;
+
+    //subtle vignette
+    col *= 0.9 + 0.2*pow(16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y), 0.2);
+
+    fragColor = vec4(col, 1.0);
+}
+</pre></code>
             </div>
           </div>
         </label>
@@ -541,11 +755,124 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
               <div class="thumb">
                 <img src="images/shader02.jpg" alt="shader02" />
               </div>
-              <h3 class="card-title">13</h3>
-              <p class="card-desc">13</p>
+              <h3 class="card-title">African Wood</h3>
+              <p class="card-desc">The image simulating the texture of African wood.</p>
             </div>
             <div class="card-face card-back">
-              <code><pre>// shader02 process code here...</pre></code>
+              <code><pre>float hash21(vec2 p){
+    p = fract(p*vec2(123.34, 456.21));
+    p += dot(p, p+34.345);
+    return fract(p.x*p.y);
+}
+
+float noise2(vec2 p){
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    float a = hash21(i);
+    float b = hash21(i+vec2(1,0));
+    float c = hash21(i+vec2(0,1));
+    float d = hash21(i+vec2(1,1));
+    vec2 u = f*f*(3.0-2.0*f);
+    return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+}
+
+float fbm(vec2 p){
+    float v = 0.0;
+    float a = 0.5;
+    mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+    for(int i=0;i<5;i++){
+        v += a * noise2(p);
+        p = m * p;
+        a *= 0.35;
+    }
+    return v;
+}
+
+//wood height field: rings + grain + warp
+float woodHeight(vec2 p){
+    //Mapping
+    p *= vec2(9.0, 1.0);
+
+    //domain warp (feeding Noise into another Noise's vector)
+    float w = fbm(p*0.8);
+    vec2 warp = vec2(fbm(p + 47.3), fbm(p + 45.1)) - 0.5;
+    p += warp * (10.8 + 3.6*w);
+
+    //rings
+    float ringScale = 5.6;              // bigger = more rings
+    float r = p.x;                      // along x = ring direction for plank
+    float rings = sin(r*ringScale + 17.0*fbm(p*0.15));
+    rings = 0.5 + 0.5*rings;
+
+    //grain (fine fibers)
+    float grain = fbm(p*6.0);
+    grain = smoothstep(0.35, 0.85, grain);
+
+    //combine
+    float h = rings;
+    h = mix(h, grain, 0.25);
+    h += 0.15*fbm(p*1.6);
+    return h;
+}
+
+// color ramp like Blender ColorRamp
+vec3 woodColor(float h){
+    vec3 c1 = vec3(0.85, 0.60, 0.40);   //light
+    vec3 c2 = vec3(0.65, 0.25, 0.15);   //mid
+    vec3 c3 = vec3(0.33, 0.12, 0.05);   //dark rings
+    float t1 = smoothstep(0.02, 0.77, h);
+    vec3 c = mix(c1, c2, t1);
+    float t2 = smoothstep(0.75, 0.80, h);
+    c = mix(c, c3, t2);
+    return c;
+}
+
+vec3 bumpNormal(vec2 uv, float strength){
+    //finite difference normal from height field
+    float e = 0.0015;
+    float h  = woodHeight(uv);
+    float hx = woodHeight(uv + vec2(e,0.0));
+    float hy = woodHeight(uv + vec2(0.0,e));
+    vec3 n = normalize(vec3((h - hx)*strength, (h - hy)*strength, 1.0));
+    return n;
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord.xy / iResolution.xy;
+    //center + aspect
+    vec2 p = (uv - 0.5);
+    p.x *= iResolution.x / iResolution.y;
+
+    //animate slightly to see it "alive"
+    //p += 0.02*sin(iTime*0.2);
+
+    float h = woodHeight(p);
+    vec3 albedo = woodColor(h);
+
+    //roughness variation (like ColorRamp into Roughness)
+    float rough = mix(0.25, 0.75, smoothstep(0.2, 0.9, fbm(p*2.0)));
+
+    // normal from height (like Bump node)
+    vec3 n = bumpNormal(p, 0.5);
+
+    //lighting
+    vec3 l = normalize(vec3(0.4, 0.6, 0.8));
+    vec3 v = normalize(vec3(0.0, 0.0, 1.0));
+    vec3 hvec = normalize(l + v);
+
+    float ndl = clamp(dot(n,l), 0.0, 1.0);
+    float specPow = mix(8.0, 80.0, 1.0-rough);
+    float spec = pow(clamp(dot(n,hvec),0.0,1.0), specPow);
+
+    vec3 col = albedo * (0.25 + 0.75*ndl) + spec*0.15;
+
+    //subtle vignette
+    col *= 0.9 + 0.2*pow(16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y), 0.2);
+
+    fragColor = vec4(col, 1.0);
+}
+</pre></code>
             </div>
           </div>
         </label>
@@ -558,11 +885,124 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
               <div class="thumb">
                 <img src="images/shader03.jpg" alt="shader03" />
               </div>
-              <h3 class="card-title">14</h3>
-              <p class="card-desc">14</p>
+              <h3 class="card-title">Walnut Extra Swirley</h3>
+              <p class="card-desc">The image simulating the texture of Walnut wood.</p>
             </div>
             <div class="card-face card-back">
-              <code><pre>// shader03 process code here...</pre></code>
+              <code><pre>float hash21(vec2 p){
+    p = fract(p*vec2(123.34, 456.21));
+    p += dot(p, p+34.345);
+    return fract(p.x*p.y);
+}
+
+float noise2(vec2 p){
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    float a = hash21(i);
+    float b = hash21(i+vec2(1,0));
+    float c = hash21(i+vec2(0,1));
+    float d = hash21(i+vec2(1,1));
+    vec2 u = f*f*(3.0-2.0*f);
+    return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+}
+
+float fbm(vec2 p){
+    float v = 0.0;
+    float a = 0.5;
+    mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+    for(int i=0;i<5;i++){
+        v += a * noise2(p);
+        p = m * p;
+        a *= 0.5;
+    }
+    return v;
+}
+
+//wood height field: rings + grain + warp
+float woodHeight(vec2 p){
+    //Mapping
+    p *= vec2(6.0, 1.5);
+
+    //domain warp (feeding Noise into another Noise's vector)
+    float w = fbm(p*0.95);
+    vec2 warp = vec2(fbm(p + 0.3), fbm(p + 5.1)) - 0.5;
+    p += warp * (15.8 + 6.6*w);
+
+    //rings
+    float ringScale = 2.6;              // bigger = more rings
+    float r = p.x;                      // along x = ring direction for plank
+    float rings = sin(r*ringScale + 6.0*fbm(p*0.5));
+    rings = 0.5 + 0.5*rings;
+
+    //grain (fine fibers)
+    float grain = fbm(p*6.0);
+    grain = smoothstep(0.35, 0.85, grain);
+
+    //combine
+    float h = rings;
+    h = mix(h, grain, 0.35);
+    h += 0.15*fbm(p*1.6);
+    return h;
+}
+
+// color ramp like Blender ColorRamp
+vec3 woodColor(float h){
+    vec3 c1 = vec3(0.76, 0.55, 0.40);   //light
+    vec3 c2 = vec3(0.67, 0.45, 0.32);   //mid
+    vec3 c3 = vec3(0.43, 0.30, 0.25);   //dark rings
+    float t1 = smoothstep(0.05, 0.85, h);
+    vec3 c = mix(c1, c2, t1);
+    float t2 = smoothstep(0.80, 0.95, h);
+    c = mix(c, c3, t2);
+    return c;
+}
+
+vec3 bumpNormal(vec2 uv, float strength){
+    //finite difference normal from height field
+    float e = 0.0015;
+    float h  = woodHeight(uv);
+    float hx = woodHeight(uv + vec2(e,0.0));
+    float hy = woodHeight(uv + vec2(0.0,e));
+    vec3 n = normalize(vec3((h - hx)*strength, (h - hy)*strength, 1.0));
+    return n;
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord.xy / iResolution.xy;
+    //center + aspect
+    vec2 p = (uv - 0.5);
+    p.x *= iResolution.x / iResolution.y;
+
+    //animate slightly to see it "alive"
+    //p += 0.02*sin(iTime*0.2);
+
+    float h = woodHeight(p);
+    vec3 albedo = woodColor(h);
+
+    //roughness variation (like ColorRamp into Roughness)
+    float rough = mix(0.25, 0.75, smoothstep(0.2, 0.9, fbm(p*2.0)));
+
+    // normal from height (like Bump node)
+    vec3 n = bumpNormal(p, 0.25);
+
+    //lighting
+    vec3 l = normalize(vec3(0.4, 0.6, 0.8));
+    vec3 v = normalize(vec3(0.0, 0.0, 1.0));
+    vec3 hvec = normalize(l + v);
+
+    float ndl = clamp(dot(n,l), 0.0, 1.0);
+    float specPow = mix(8.0, 80.0, 1.0-rough);
+    float spec = pow(clamp(dot(n,hvec),0.0,1.0), specPow);
+
+    vec3 col = albedo * (0.25 + 0.75*ndl) + spec*0.15;
+
+    //subtle vignette
+    col *= 0.9 + 0.2*pow(16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y), 0.2);
+
+    fragColor = vec4(col, 1.0);
+}
+</pre></code>
             </div>
           </div>
         </label>
@@ -575,11 +1015,124 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
               <div class="thumb">
                 <img src="images/shader04.jpg" alt="shader04" />
               </div>
-              <h3 class="card-title">15</h3>
-              <p class="card-desc">15</p>
+              <h3 class="card-title">Teak Wood</h3>
+              <p class="card-desc">The image simulating the texture of Teak wood.</p>
             </div>
             <div class="card-face card-back">
-              <code><pre>// shader04 process code here...</pre></code>
+              <code><pre>float hash21(vec2 p){
+    p = fract(p*vec2(123.34, 456.21));
+    p += dot(p, p+34.345);
+    return fract(p.x*p.y);
+}
+
+float noise2(vec2 p){
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    float a = hash21(i);
+    float b = hash21(i+vec2(1,0));
+    float c = hash21(i+vec2(0,1));
+    float d = hash21(i+vec2(1,1));
+    vec2 u = f*f*(3.0-2.0*f);
+    return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+}
+
+float fbm(vec2 p){
+    float v = 0.0;
+    float a = 0.5;
+    mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+    for(int i=0;i<5;i++){
+        v += a * noise2(p);
+        p = m * p;
+        a *= 0.5;
+    }
+    return v;
+}
+
+//wood height field: rings + grain + warp
+float woodHeight(vec2 p){
+    //Mapping
+    p *= vec2(10.0, 1.0);
+
+    //domain warp (feeding Noise into another Noise's vector)
+    float w = fbm(p*0.8);
+    vec2 warp = vec2(fbm(p + 7.3), fbm(p + 15.1)) - 0.5;
+    p += warp * (8.8 + 13.6*w);
+
+    //rings
+    float ringScale = 3.6;              // bigger = more rings
+    float r = p.x;                      // along x = ring direction for plank
+    float rings = sin(r*ringScale + 17.0*fbm(p*0.15));
+    rings = 0.5 + 0.5*rings;
+
+    //grain (fine fibers)
+    float grain = fbm(p*6.0);
+    grain = smoothstep(0.35, 0.85, grain);
+
+    //combine
+    float h = rings;
+    h = mix(h, grain, 0.25);
+    h += 0.15*fbm(p*1.6);
+    return h;
+}
+
+// color ramp like Blender ColorRamp
+vec3 woodColor(float h){
+    vec3 c1 = vec3(0.79, 0.50, 0.22);   //light
+    vec3 c2 = vec3(0.63, 0.33, 0.05);   //mid
+    vec3 c3 = vec3(0.35, 0.17, 0.07);   //dark rings
+    float t1 = smoothstep(0.02, 0.60, h);
+    vec3 c = mix(c1, c2, t1);
+    float t2 = smoothstep(0.75, 0.95, h);
+    c = mix(c, c3, t2);
+    return c;
+}
+
+vec3 bumpNormal(vec2 uv, float strength){
+    //finite difference normal from height field
+    float e = 0.0015;
+    float h  = woodHeight(uv);
+    float hx = woodHeight(uv + vec2(e,0.0));
+    float hy = woodHeight(uv + vec2(0.0,e));
+    vec3 n = normalize(vec3((h - hx)*strength, (h - hy)*strength, 1.0));
+    return n;
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord.xy / iResolution.xy;
+    //center + aspect
+    vec2 p = (uv - 0.5);
+    p.x *= iResolution.x / iResolution.y;
+
+    //animate slightly to see it "alive"
+    //p += 0.02*sin(iTime*0.2);
+
+    float h = woodHeight(p);
+    vec3 albedo = woodColor(h);
+
+    //roughness variation (like ColorRamp into Roughness)
+    float rough = mix(0.25, 0.75, smoothstep(0.2, 0.9, fbm(p*2.0)));
+
+    // normal from height (like Bump node)
+    vec3 n = bumpNormal(p, 0.5);
+
+    //lighting
+    vec3 l = normalize(vec3(0.4, 0.6, 0.8));
+    vec3 v = normalize(vec3(0.0, 0.0, 1.0));
+    vec3 hvec = normalize(l + v);
+
+    float ndl = clamp(dot(n,l), 0.0, 1.0);
+    float specPow = mix(8.0, 80.0, 1.0-rough);
+    float spec = pow(clamp(dot(n,hvec),0.0,1.0), specPow);
+
+    vec3 col = albedo * (0.25 + 0.75*ndl) + spec*0.15;
+
+    //subtle vignette
+    col *= 0.9 + 0.2*pow(16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y), 0.2);
+
+    fragColor = vec4(col, 1.0);
+}
+</pre></code>
             </div>
           </div>
         </label>
@@ -592,11 +1145,124 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
               <div class="thumb">
                 <img src="images/shader05.jpg" alt="shader05" />
               </div>
-              <h3 class="card-title">16</h3>
-              <p class="card-desc">16</p>
+              <h3 class="card-title">Wild Cherry</h3>
+              <p class="card-desc">The image simulating the texture of Cherry wood.</p>
             </div>
             <div class="card-face card-back">
-              <code><pre>// shader05 process code here...</pre></code>
+              <code><pre>float hash21(vec2 p){
+    p = fract(p*vec2(123.34, 456.21));
+    p += dot(p, p+34.345);
+    return fract(p.x*p.y);
+}
+
+float noise2(vec2 p){
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    float a = hash21(i);
+    float b = hash21(i+vec2(1,0));
+    float c = hash21(i+vec2(0,1));
+    float d = hash21(i+vec2(1,1));
+    vec2 u = f*f*(3.0-2.0*f);
+    return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+}
+
+float fbm(vec2 p){
+    float v = 0.0;
+    float a = 0.5;
+    mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+    for(int i=0;i<5;i++){
+        v += a * noise2(p);
+        p = m * p;
+        a *= 0.5;
+    }
+    return v;
+}
+
+//wood height field: rings + grain + warp
+float woodHeight(vec2 p){
+    //Mapping
+    p *= vec2(12.0, 2.0);
+
+    //domain warp (feeding Noise into another Noise's vector)
+    float w = fbm(p*0.8);
+    vec2 warp = vec2(fbm(p + 7.3), fbm(p + 35.1)) - 0.5;
+    p += warp * (2.8 + 0.99*w);
+
+    //rings
+    float ringScale = 2.6;              // bigger = more rings
+    float r = p.x;                      // along x = ring direction for plank
+    float rings = sin(r*ringScale + 6.0*fbm(p*0.35));
+    rings = 0.5 + 0.5*rings;
+
+    //grain (fine fibers)
+    float grain = fbm(p*6.0);
+    grain = smoothstep(0.35, 0.85, grain);
+
+    //combine
+    float h = rings;
+    h = mix(h, grain, 0.25);
+    h += 0.15*fbm(p*1.6);
+    return h;
+}
+
+// color ramp like Blender ColorRamp
+vec3 woodColor(float h){
+    vec3 c1 = vec3(0.72, 0.40, 0.18);   //light
+    vec3 c2 = vec3(0.65, 0.30, 0.20);   //mid
+    vec3 c3 = vec3(0.50, 0.25, 0.13);   //dark rings
+    float t1 = smoothstep(0.05, 0.55, h);
+    vec3 c = mix(c1, c2, t1);
+    float t2 = smoothstep(0.69, 0.95, h);
+    c = mix(c, c3, t2);
+    return c;
+}
+
+vec3 bumpNormal(vec2 uv, float strength){
+    //finite difference normal from height field
+    float e = 0.0015;
+    float h  = woodHeight(uv);
+    float hx = woodHeight(uv + vec2(e,0.0));
+    float hy = woodHeight(uv + vec2(0.0,e));
+    vec3 n = normalize(vec3((h - hx)*strength, (h - hy)*strength, 1.0));
+    return n;
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord.xy / iResolution.xy;
+    //center + aspect
+    vec2 p = (uv - 0.5);
+    p.x *= iResolution.x / iResolution.y;
+
+    //animate slightly to see it "alive"
+    //p += 0.02*sin(iTime*0.2);
+
+    float h = woodHeight(p);
+    vec3 albedo = woodColor(h);
+
+    //roughness variation (like ColorRamp into Roughness)
+    float rough = mix(0.25, 0.75, smoothstep(0.2, 0.9, fbm(p*2.0)));
+
+    // normal from height (like Bump node)
+    vec3 n = bumpNormal(p, 1.5);
+
+    //lighting
+    vec3 l = normalize(vec3(0.4, 0.6, 0.8));
+    vec3 v = normalize(vec3(0.0, 0.0, 1.0));
+    vec3 hvec = normalize(l + v);
+
+    float ndl = clamp(dot(n,l), 0.0, 1.0);
+    float specPow = mix(8.0, 80.0, 1.0-rough);
+    float spec = pow(clamp(dot(n,hvec),0.0,1.0), specPow);
+
+    vec3 col = albedo * (0.25 + 0.75*ndl) + spec*0.15;
+
+    //subtle vignette
+    col *= 0.9 + 0.2*pow(16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y), 0.2);
+
+    fragColor = vec4(col, 1.0);
+}
+</pre></code>
             </div>
           </div>
         </label>
