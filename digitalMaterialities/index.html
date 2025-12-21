@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shader Gallery</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <main class="page">
+      <!-- ====== Group A: shader06 - shader13 (top in your sketch) ====== -->
+       <section class="note">Image 01 ~ Image 08</section>
+       <section class="note">Some attempts to create GLSL Fractals by following tutorial.</section>
+      <section class="grid">
+        <!-- shader06 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader06" />
+        <label class="card" for="c-shader06">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader06.jpg" alt="shader06" />
+              </div>
+              <h3 class="card-title">Fractals 01</h3>
+              <p class="card-desc">The first stage of creating this Fractals effect.</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{ vec2 uv = fragCoord / iResolution.xy; //[0,1]
+fragColor = vec4(uv, 0.0, 1.0); //R=x, G=y
+}</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader07 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader07" />
+        <label class="card" for="c-shader07">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader07.jpg" alt="shader07" />
+              </div>
+              <h3 class="card-title">Fractals 02</h3>
+              <p class="card-desc">The second stage of creating this Fractals effect.</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>void mainImage(out vec4 fragColor, in vec2 fragCoord)
+                { vec2 p = fragCoord / iResolution.xy * 2.0 - 1.0;
+    float d = length(p);
+    fragColor = vec4(vec3(d), 1.0);
+}</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader08 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader08" />
+        <label class="card" for="c-shader08">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader08.jpg" alt="shader08" />
+              </div>
+              <h3 class="card-title">Fractals 03</h3>
+              <p class="card-desc">The third stage of creating this Fractals effect.</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 p = fragCoord / iResolution.xy * 2.0 - 1.0;
+    for (float i = 0.0; i < 64.0; i += 1.0)
+    {
+        //fold
+        p = abs(p);
+        //move
+        p -= 0.5;
+        //scale
+        p *= 1.03;
+    }
+
+    float d = length(p);
+    fragColor = vec4(vec3(d), 1.0);
+}</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader09 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader09" />
+        <label class="card" for="c-shader09">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader09.jpg" alt="shader09" />
+              </div>
+              <h3 class="card-title">Fractals 04</h3>
+              <p class="card-desc">The forth stage of creating this Fractals effect.</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>void mainImage(out vec4 fragColor, in vec2 fragCoord){
+    float angle = iTime * 0.3;
+    mat2 R = mat2(cos(angle), -sin(angle),
+                  sin(angle),  cos(angle));
+
+    vec2 p = fragCoord / iResolution.xy * 2.0 - 1.0;
+
+    for (float i = 0.0; i < 64.0; i += 1.0)
+    {
+        p = abs(p);
+        p -= 0.5;
+        p *= 1.03;
+        p = R * p; //rotate
+    }
+
+    float d = length(p);
+    fragColor = vec4(vec3(d), 1.0);
+}</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader10 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader10" />
+        <label class="card" for="c-shader10">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader10.jpg" alt="shader10" />
+              </div>
+              <h3 class="card-title">Fractals 05</h3>
+              <p class="card-desc">The fifth stage of creating this Fractals effect. Adding the iTime component gives it a rotating effect.</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>void mainImage(out vec4 fragColor, in vec2 fragCoord){
+    float angle = iTime * 0.3;
+    mat2 R = mat2(cos(angle), -sin(angle),
+                  sin(angle),  cos(angle));
+
+    vec2 p = fragCoord / iResolution.xy * 2.0 - 1.0;
+
+    for (float i = 0.0; i < 128.0; i += 1.0)
+    {
+        p = abs(p);
+        p -= 0.5;
+        p *= 1.03;
+        p = R * p;
+    }
+
+    fragColor = vec4(
+        length(p),
+        length(p + vec2( 0.2, -0.3)),
+        length(p + vec2(-0.4, -0.1)),
+        1.0
+    );
+}</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader11 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader11" />
+        <label class="card" for="c-shader11">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader11.jpg" alt="shader11" />
+              </div>
+              <h3 class="card-title">Fractals 06</h3>
+              <p class="card-desc">The state of the same code at different times in Fractals 05.</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>void mainImage(out vec4 fragColor, in vec2 fragCoord){
+    float angle = iTime * 0.3;
+    mat2 R = mat2(cos(angle), -sin(angle),
+                  sin(angle),  cos(angle));
+
+    vec2 p = fragCoord / iResolution.xy * 2.0 - 1.0;
+
+    for (float i = 0.0; i < 128.0; i += 1.0)
+    {
+        p = abs(p);
+        p -= 0.5;
+        p *= 1.03;
+        p = R * p;
+    }
+
+    fragColor = vec4(
+        length(p),
+        length(p + vec2( 0.2, -0.3)),
+        length(p + vec2(-0.4, -0.1)),
+        1.0
+    );
+}</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader12 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader12" />
+        <label class="card" for="c-shader12">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader12.jpg" alt="shader12" />
+              </div>
+              <h3 class="card-title">Snowflake01</h3>
+              <p class="card-desc">The snowflake pattern created using the fractal concept.</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>#define PI 3.14159265
+
+//6-fold symmetry
+vec2 fold6(vec2 p) {
+    float a = atan(p.y, p.x);
+    float r = length(p);
+    float sector = PI / 3.0;
+    a = mod(a, sector) - sector * 0.5;
+    a = abs(a);
+    return vec2(cos(a), sin(a)) * r;
+}
+
+//segment distance
+float sdSegment(vec2 p, vec2 a, vec2 b) {
+    vec2 pa = p - a;
+    vec2 ba = b - a;
+    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+    return length(pa - ba * h);
+}
+
+//line
+float drawLine(vec2 p, vec2 a, vec2 b, float thickness) {
+    float d = sdSegment(p, a, b);
+    return smoothstep(thickness, thickness * 0.75, d);
+}
+
+//snowflake in one wedge
+float snowflake(vec2 p) {
+    float ink = 0.0;
+    float t = 0.05; //thickness
+    
+    // Main stem (center vertical line)
+    ink += drawLine(p, vec2(0.0, 0.0), vec2(0.0, 1.0), t);
+    
+    // Side branches
+    ink += drawLine(p, vec2(0.0, 0.3), vec2(0.3, 0.5), t * 7.8);
+    ink += drawLine(p, vec2(0.0, 0.5), vec2(0.35, 0.7), t * 0.8);
+    ink += drawLine(p, vec2(0.0, 0.7), vec2(0.25, 0.85), t * 0.7);
+    
+    // Branch tips
+    ink += drawLine(p, vec2(0.3, 0.5), vec2(0.4, 0.55), t * 0.6);
+    ink += drawLine(p, vec2(0.35, 0.7), vec2(0.45, 0.75), t * 10.6);
+    
+    return clamp(ink, 0.0, 1.0);
+}
+
+// Hash function
+float hash(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    // Centered coordinates
+    vec2 uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y;
+    
+    //Tiling
+    float tileSize = 5.2;
+    vec2 grid = uv * tileSize;
+    vec2 id = floor(grid);
+    vec2 local = fract(grid) - 0.5;
+    
+    //Random
+    float r = hash(id);
+    float scale = mix(0.8, 1.0, r);
+    vec2 jitter = vec2(hash(id + 10.0), hash(id + 20.0)) - 0.5;
+    jitter *= 0.55;
+    
+    //position
+    vec2 p = (local + jitter) * scale * 1.5;
+    
+    //apply symmetry
+    p = fold6(p);
+    
+    //draw snowflake
+    float flake = snowflake(p);
+    
+    //add glow
+    float glow = exp(-length(p) * 1.5) * 0.25;
+    flake = max(flake, glow);
+    
+    //colors
+    vec3 bgColor = vec3(0.01, 0.02, 0.08);
+    vec3 flakeColor = vec3(0.7, 0.85, 1.0);
+    
+    vec3 col = mix(bgColor, flakeColor, flake);
+    
+    fragColor = vec4(col, 1.0);
+}</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader13 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader13" />
+        <label class="card" for="c-shader13">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader13.jpg" alt="shader13" />
+              </div>
+              <h3 class="card-title">Snowflake02</h3>
+              <p class="card-desc">The snowflake pattern was created using the fractal concept and is a modification of the previous snowflake pattern.</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>#define PI 3.14159265
+
+//6-fold symmetry
+vec2 fold6(vec2 p) {
+    float a = atan(p.y, p.x);
+    float r = length(p);
+    float sector = PI / 3.0;
+    a = mod(a, sector) - sector * 0.5;
+    a = abs(a);
+    return vec2(cos(a), sin(a)) * r;
+}
+
+//segment distance
+float sdSegment(vec2 p, vec2 a, vec2 b) {
+    vec2 pa = p - a;
+    vec2 ba = b - a;
+    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+    return length(pa - ba * h);
+}
+
+//line
+float drawLine(vec2 p, vec2 a, vec2 b, float thickness) {
+    float d = sdSegment(p, a, b);
+    return smoothstep(thickness, thickness * 0.75, d);
+}
+
+//snowflake in one wedge
+float snowflake(vec2 p) {
+    float ink = 0.0;
+    float t = 0.05; //thickness
+    
+    // Main stem (center vertical line)
+    ink += drawLine(p, vec2(0.0, 0.0), vec2(0.0, 1.0), t);
+    
+    // Side branches
+    ink += drawLine(p, vec2(0.0, 0.3), vec2(0.3, 0.5), t * 9.5);
+    ink += drawLine(p, vec2(0.0, 0.5), vec2(0.35, 0.7), t * 0.8);
+    ink += drawLine(p, vec2(0.0, 0.7), vec2(0.25, 0.85), t * 0.7);
+    
+    // Branch tips
+    ink += drawLine(p, vec2(0.3, 0.5), vec2(0.94, 0.15), t * 0.6);
+    ink += drawLine(p, vec2(0.35, 0.7), vec2(0.45, 0.95), t * 10.6);
+    
+    return clamp(ink, 0.0, 1.0);
+}
+
+// Hash function
+float hash(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    // Centered coordinates
+    vec2 uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y;
+    
+    //Tiling
+    float tileSize = 7.5;
+    vec2 grid = uv * tileSize;
+    vec2 id = floor(grid);
+    vec2 local = fract(grid) - 0.5;
+    
+    //Random
+    float r = hash(id);
+    float scale = mix(0.8, 1.0, r);
+    vec2 jitter = vec2(hash(id + 10.0), hash(id + 5.0)) - 0.5;
+    jitter *= 0.55;
+    
+    //position
+    vec2 p = (local + jitter) * scale * 3.5;
+    
+    //apply symmetry
+    p = fold6(p);
+    
+    //draw snowflake
+    float flake = snowflake(p);
+    
+    //add glow
+    float glow = exp(-length(p) * 1.5) * 0.45;
+    flake = max(flake, glow);
+    
+    //colors
+    vec3 bgColor = vec3(0.01, 0.01, 0.08);
+    vec3 flakeColor = vec3(0.9, 0.95, 1.0);
+    
+    vec3 col = mix(bgColor, flakeColor, flake);
+    
+    fragColor = vec4(col, 1.0);
+}</pre></code>
+            </div>
+          </div>
+        </label>
+      </section>
+
+      <!-- ====== nodes.png big image ====== -->
+
+<section class="note">Image 09 ~ Image 16</section>
+      <section class="wide-image half">
+  <img src="images/nodes.png" alt="nodes" />
+</section>
+
+<section class="note">
+  I previously created a wood-like material using nodes in Blender, and I want to mimic this material to create a similar wood texture image in Shadertoy.
+</section>
+
+<section class="wide-image half">
+  <img src="images/wood.png" alt="wood" />
+</section>
+<section class="note">
+  After creating a rough first version of the wood texture, I modified it to create several subsequent versions that resembled specific types of wood.
+</section>
+
+
+      <!-- ====== Group B: step1-step3 ====== -->
+      <section class="grid">
+        <!-- step1 -->
+        <input class="flip-toggle" type="checkbox" id="c-step1" />
+        <label class="card" for="c-step1">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/step1.jpg" alt="step1" />
+              </div>
+              <h3 class="card-title">Wood texture step 1</h3>
+              <p class="card-desc">The first stage of creating this wood-like texture.</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>float hash21(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 34.345);
+    return fract(p.x * p.y);
+}
+
+//make it flat and mixed
+float noise2(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    float a = hash21(i);
+    float b = hash21(i + vec2(1, 0));
+    float c = hash21(i + vec2(0, 1));
+    float d = hash21(i + vec2(1, 1));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+float fbm(vec2 p) {
+    float v = 0.0; float a = 0.5;
+    mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
+    for(int i=0; i<5; i++) {
+        v += a * noise2(p);
+        p = m * p; a *= 0.5;
+    }
+    return v;
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    vec2 p = (fragCoord - 0.5 * iResolution.xy) / iResolution.y;
+    float col = fbm(p * 5.0);
+    fragColor = vec4(vec3(col), 1.0);
+}</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- step2 -->
+        <input class="flip-toggle" type="checkbox" id="c-step2" />
+        <label class="card" for="c-step2">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/step2.jpg" alt="step2" />
+              </div>
+              <h3 class="card-title">10</h3>
+              <p class="card-desc">10</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>// step2 process code here...</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- step3 -->
+        <input class="flip-toggle" type="checkbox" id="c-step3" />
+        <label class="card" for="c-step3">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/step3.jpg" alt="step3" />
+              </div>
+              <h3 class="card-title">11</h3>
+              <p class="card-desc">11</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>// step3 process code here...</pre></code>
+            </div>
+          </div>
+        </label>
+      </section>
+
+      <!-- ====== Group C: shader01 - shader05 ====== -->
+      <section class="grid">
+        <!-- shader01 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader01" />
+        <label class="card" for="c-shader01">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader01.jpg" alt="shader01" />
+              </div>
+              <h3 class="card-title">12</h3>
+              <p class="card-desc">12</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>// shader01 process code here...</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader02 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader02" />
+        <label class="card" for="c-shader02">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader02.jpg" alt="shader02" />
+              </div>
+              <h3 class="card-title">13</h3>
+              <p class="card-desc">13</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>// shader02 process code here...</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader03 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader03" />
+        <label class="card" for="c-shader03">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader03.jpg" alt="shader03" />
+              </div>
+              <h3 class="card-title">14</h3>
+              <p class="card-desc">14</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>// shader03 process code here...</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader04 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader04" />
+        <label class="card" for="c-shader04">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader04.jpg" alt="shader04" />
+              </div>
+              <h3 class="card-title">15</h3>
+              <p class="card-desc">15</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>// shader04 process code here...</pre></code>
+            </div>
+          </div>
+        </label>
+
+        <!-- shader05 -->
+        <input class="flip-toggle" type="checkbox" id="c-shader05" />
+        <label class="card" for="c-shader05">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <div class="thumb">
+                <img src="images/shader05.jpg" alt="shader05" />
+              </div>
+              <h3 class="card-title">16</h3>
+              <p class="card-desc">16</p>
+            </div>
+            <div class="card-face card-back">
+              <code><pre>// shader05 process code here...</pre></code>
+            </div>
+          </div>
+        </label>
+      </section>
+    </main>
+  </body>
+</html>
